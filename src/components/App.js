@@ -15,8 +15,9 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
+  const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false)
   const [selectedCard, setSelectedCard] = React.useState({})
-  const [currentUser, setCurrentUser] = React.useState("")
+  const [currentUser, setCurrentUser] = React.useState({})
 
   const [cards, setCards] = React.useState([])
 	
@@ -48,11 +49,12 @@ function App() {
 
 	React.useEffect((() => {
     api.getUserInfo()
-			.then((dataOfUser) => {
-				setCurrentUser(dataOfUser);
+			.then((userData) => {
+				setCurrentUser(userData);
 			}).catch((err) => {console.log(err)})
 	}), [])
   function handleCardClick(card) {
+    setIsImagePopupOpen(true)
     setSelectedCard(card)
   }
   function handleEditAvatarClick(e) {
@@ -70,29 +72,31 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setSelectedCard({})
+    setIsImagePopupOpen(false)
+    setTimeout(() => {setSelectedCard({})}, 500)
   }
   function handleUpdateUser(data) {
     api.updateUserInfo(data)
       .then((dataOfUser) => {
         setCurrentUser(dataOfUser);
+        closeAllPopups()
       }).catch((err) => {console.log(err)})
-    closeAllPopups()
+    
   }
   function handleUpdateAvatar(data) {
     api.updateUserAvatar(data)
       .then((dataOfUser) => {
         setCurrentUser(dataOfUser);
+        closeAllPopups()
       }).catch((err) => {console.log(err)})
-    closeAllPopups()
   }
 
   function handleAddPlaceSubmit(data) {
     api.postNewCard(data)
     .then((newCard) => {
       setCards([newCard, ...cards]); 
+      closeAllPopups()
     }).catch((err) => {console.log(err)})
-    closeAllPopups()
   }
   return (
     <div className="App">
@@ -112,7 +116,7 @@ function App() {
           <PopupWithForm name="confirm" title="Вы уверены?" button="Да">
           </PopupWithForm>
 
-          <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+          <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups}/>
         </div>
       </CurrentUserContext.Provider>
     </div>

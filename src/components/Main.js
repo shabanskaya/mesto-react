@@ -18,7 +18,7 @@ function Main(props) {
 			
 			<section className="places">
 				<ul className="places__list">
-					{props.cards.map((card, i) => { return (
+					{props.cards.map((card) => { return (
 						<Card onCardDelete={props.onCardDelete} onCardLike={props.onCardLike} onCardClick={props.onCardClick} key={card._id} card={card} />
 					)})}
 				</ul>
